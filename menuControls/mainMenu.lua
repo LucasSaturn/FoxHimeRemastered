@@ -14,6 +14,29 @@ local pentagonSpinValue = {0,0,0,0}
 --variable that lists whether a button is hovered over
 local currentHoveredButton = ""
 
+
+--declares all relevant menu items
+function menuDeclaration()
+	--Declare background tile graphic
+	backgroundGraphic = love.graphics.newImage("assets/images/mainMenu/bg2.png")
+	--declare pentagons behind text
+	pentGraphic = love.graphics.newImage("assets/images/mainMenu/pent.png")
+	--declare local text font
+	GenJyuuGothic = love.graphics.newFont("assets/fonts/GenJyuuGothic-Bold.ttf", 30)
+end
+
+
+
+--[[ 
+  ____             _                                   _                        _           _             
+ | __ )  __ _  ___| | ____ _ _ __ ___  _   _ _ __   __| |    _ __ ___ _ __   __| | ___ _ __(_)_ __   __ _ 
+ |  _ \ / _` |/ __| |/ / _` | '__/ _ \| | | | '_ \ / _` |   | '__/ _ \ '_ \ / _` |/ _ \ '__| | '_ \ / _` |
+ | |_) | (_| | (__|   < (_| | | | (_) | |_| | | | | (_| |   | | |  __/ | | | (_| |  __/ |  | | | | | (_| |
+ |____/ \__,_|\___|_|\_\__, |_|  \___/ \__,_|_| |_|\__,_|   |_|  \___|_| |_|\__,_|\___|_|  |_|_| |_|\__, |
+                       |___/                                                                        |___/ 
+
+--]]
+
 --this function figures out the largest size that the background can be
 	--this is in terms of fitting a 16:9 image inside the window
 local function figureOutLargestScaleBG(WidthBackground, HeightBackground, screenX, screenY)
@@ -37,6 +60,22 @@ local function drawBackground()
 	love.graphics.draw(backgroundGraphic,backgroundX,backgroundY,0,backgroundScaleFactor,backgroundScaleFactor)
 end
 
+
+
+
+
+
+--[[ 
+	
+  ____            _                                                 _           _             
+ |  _ \ ___ _ __ | |_ __ _  __ _  ___  _ __      _ __ ___ _ __   __| | ___ _ __(_)_ __   __ _ 
+ | |_) / _ \ '_ \| __/ _` |/ _` |/ _ \| '_ \    | '__/ _ \ '_ \ / _` |/ _ \ '__| | '_ \ / _` |
+ |  __/  __/ | | | || (_| | (_| | (_) | | | |   | | |  __/ | | | (_| |  __/ |  | | | | | (_| |
+ |_|   \___|_| |_|\__\__,_|\__, |\___/|_| |_|   |_|  \___|_| |_|\__,_|\___|_|  |_|_| |_|\__, |
+                           |___/                                                        |___/ 
+
+--]]
+
 --draw a pentagon onscreen
 local function drawPentagon(xPos,yPos,yScale,index,scaleFactors)
 	--draw it at xPosition
@@ -46,8 +85,38 @@ local function drawPentagon(xPos,yPos,yScale,index,scaleFactors)
 	love.graphics.draw(pentGraphic,xPos, yPos*yScale,pentagonSpinValue[index],scaleFactors[index], scaleFactors[index],53,55)
 end
 
+--individual spinning function
+local function spinPentagonIfStatements(string,index,spinSpeed,maxVal)
+	--if the currently hovered button is right then
+	if(currentHoveredButton==string) then
+		--if the value is less than the maximum value, add delta time onto the spin value
+		if(pentagonSpinValue[index]<maxVal) then pentagonSpinValue[index] = pentagonSpinValue[index]+(love.timer.getDelta()*spinSpeed) end
+	--the button isn't hovered
+	elseif(pentagonSpinValue[index]>0) then
+		--remove the delta time
+		pentagonSpinValue[index] = pentagonSpinValue[index]-(love.timer.getDelta()*spinSpeed)
+	end
+
+	--if the pentagon spin value is too high, cap it
+	if(pentagonSpinValue[index]>maxVal) then pentagonSpinValue[index] = maxVal
+	--alternatively, if the pentagon spin value is too low, cap it
+	elseif(pentagonSpinValue[index]<0) then pentagonSpinValue[index] = 0
+	end
+end
+
+--main spin function to call individual spinning function
+local function spinPentagonHost()
+	local spinSpeed = 15
+	local maxVal = 6.28319
+
+	spinPentagonIfStatements("START",1,spinSpeed,maxVal)
+	spinPentagonIfStatements("CONFIG",2,spinSpeed,maxVal)
+	spinPentagonIfStatements("CG_MODE",3,spinSpeed,maxVal)
+	spinPentagonIfStatements("EXIT",4,spinSpeed,maxVal)
+end
+
 --the function to send the draw calls for pentagons
-local function drawMenuTextPents()
+local function drawMenuPentagons()
 	--the local x positions
 	local xPosition = 1049*backgroundScaleFactor+((screenX-(backgroundGraphic:getWidth()*backgroundScaleFactor))/2)
 	local yPositionUnscaled = backgroundScaleFactor+((screenY-(backgroundGraphic:getHeight()*backgroundScaleFactor))/2)
@@ -62,9 +131,25 @@ local function drawMenuTextPents()
 	drawPentagon(xPosition,yPositionUnscaled,363,2,scaleFactors)
 	drawPentagon(xPosition,yPositionUnscaled,438,3,scaleFactors)
 	drawPentagon(xPosition,yPositionUnscaled,513,4,scaleFactors)
+
+	--run code to rotate the correct pentagons
+	spinPentagonHost()
 end
 
 
+
+
+
+
+
+--[[
+  _____         _                          _           _             
+ |_   _|____  _| |_     _ __ ___ _ __   __| | ___ _ __(_)_ __   __ _ 
+   | |/ _ \ \/ / __|   | '__/ _ \ '_ \ / _` |/ _ \ '__| | '_ \ / _` |
+   | |  __/>  <| |_    | | |  __/ | | | (_| |  __/ |  | | | | | (_| |
+   |_|\___/_/\_\\__|   |_|  \___|_| |_|\__,_|\___|_|  |_|_| |_|\__, |
+                                                               |___/ 
+--]]
 
 local function renderMenuText()
 	--declare local variables for position
@@ -78,79 +163,6 @@ local function renderMenuText()
 	love.graphics.print("CG Mode", xPosition,  415*yPositionUnscaled,  0,  backgroundScaleFactor,backgroundScaleFactor)
 	love.graphics.print("Exit",    xPosition,  490*yPositionUnscaled,  0,  backgroundScaleFactor,backgroundScaleFactor)
 end
-
-
-
-function menuDeclaration()
-	--Declare background tile graphic
-	backgroundGraphic = love.graphics.newImage("assets/images/mainMenu/bg2.png")
-	--declare pentagons behind text
-	pentGraphic = love.graphics.newImage("assets/images/mainMenu/pent.png")
-	--declare local text font
-	GenJyuuGothic = love.graphics.newFont("assets/fonts/GenJyuuGothic-Bold.ttf", 30)
-end
-
-
-
-function spinPentagon()
-	local spinSpeed = 15
-	local maxVal = 6.28319
-
-	if(currentHoveredButton=="START") then
-		if(pentagonSpinValue[1]<maxVal) then pentagonSpinValue[1] = pentagonSpinValue[1]+(love.timer.getDelta()*spinSpeed) end
-	elseif(pentagonSpinValue[1]>0) then
-		pentagonSpinValue[1] = pentagonSpinValue[1]-(love.timer.getDelta()*spinSpeed)
-	end
-
-	if(pentagonSpinValue[1]>maxVal) then pentagonSpinValue[1] = maxVal
-	elseif(pentagonSpinValue[1]<0) then pentagonSpinValue[1] = 0
-	end
-
-
-
-
-
-	if(currentHoveredButton=="CONFIG") then
-		if(pentagonSpinValue[2]<maxVal) then pentagonSpinValue[2] = pentagonSpinValue[2]+(love.timer.getDelta()*spinSpeed) end
-	elseif(pentagonSpinValue[2]>0) then
-		pentagonSpinValue[2] = pentagonSpinValue[2]-(love.timer.getDelta()*spinSpeed)
-	end
-
-	if(pentagonSpinValue[2]>maxVal) then pentagonSpinValue[2] = maxVal
-	elseif(pentagonSpinValue[2]<0) then pentagonSpinValue[2] = 0
-	end
-
-
-
-
-	if(currentHoveredButton=="CG_MODE") then
-		if(pentagonSpinValue[3]<maxVal) then pentagonSpinValue[3] = pentagonSpinValue[3]+(love.timer.getDelta()*spinSpeed) end
-	elseif(pentagonSpinValue[3]>0) then
-		pentagonSpinValue[3] = pentagonSpinValue[3]-(love.timer.getDelta()*spinSpeed)
-	end
-
-	if(pentagonSpinValue[3]>maxVal) then pentagonSpinValue[3] = maxVal
-	elseif(pentagonSpinValue[3]<0) then pentagonSpinValue[3] = 0
-	end
-
-
-
-
-	if(currentHoveredButton=="EXIT") then
-		if(pentagonSpinValue[4]<maxVal) then pentagonSpinValue[4] = pentagonSpinValue[4]+(love.timer.getDelta()*spinSpeed) end
-	elseif(pentagonSpinValue[4]>0) then
-		pentagonSpinValue[4] = pentagonSpinValue[4]-(love.timer.getDelta()*spinSpeed)
-	end
-
-	if(pentagonSpinValue[4]>maxVal) then pentagonSpinValue[4] = maxVal
-	elseif(pentagonSpinValue[4]<0) then pentagonSpinValue[4] = 0
-	end
-end
-
-
-
-
-
 
 --draw simple text to say which is hovered
 function drawTextTopLeft()
@@ -190,6 +202,8 @@ function testForMenuButton()
 	return ""
 end
 
+
+
 --is the mouse button down?
 	--if so, do stuff
 function menuMousePress(button)
@@ -202,13 +216,17 @@ end
 --this is a single function that will call all the
 	-- functions to draw in the correct order
 function drawMenu()
+	--draws background sprites
 	drawBackground()
-	drawMenuTextPents()
+
+	--draws menu text
 	renderMenuText()
-
-	spinPentagon()
-
+	--draw text that says what is hovered over
 	drawTextTopLeft()
+
+	--draws pentagons (this links to a function 
+		--that rotates the pentagons)
+	drawMenuPentagons()
 
 	--set variable that contains currently hovered button
 	currentHoveredButton = testForMenuButton()
