@@ -1,13 +1,18 @@
+--local spriteHover script
 local spriteHover = require('libs/spriteHover')
 
-
+--background variables
 local backgroundGraphic
 local backgroundScaleFactor
 
+--empty image file to test hover
 local menuButtonBlank = love.image.newImageData(275,75)
 
+--rotation of pentagons
 local pentagonSpinValue = {0,0,0,0}
 
+--this function figures out the largest size that the background can be
+	--this is in terms of fitting a 16:9 image inside the window
 local function figureOutLargestScaleBG(WidthBackground, HeightBackground, screenX, screenY)
 	--calculate the scale between the size of the sprite, and the screen resolution
 	local xScale,yScale = screenX/WidthBackground,screenY/HeightBackground
@@ -15,11 +20,11 @@ local function figureOutLargestScaleBG(WidthBackground, HeightBackground, screen
 	if(xScale<yScale) then return xScale
 	--else, return the y scale
 	else return yScale end 
-	--oof, the if statement died, return 1
+	--oof, something broke, return 1 as a failsafe
 	return 1
 end
 
-
+--draw the background
 local function drawBackground()
 	--run function to find the smallest scale on the background, and then centre it in frame
 	backgroundScaleFactor = figureOutLargestScaleBG(backgroundGraphic:getWidth(),backgroundGraphic:getHeight(),screenX,screenY)
@@ -29,68 +34,46 @@ local function drawBackground()
 	love.graphics.draw(backgroundGraphic,backgroundX,backgroundY,0,backgroundScaleFactor,backgroundScaleFactor)
 end
 
+--draw a pentagon onscreen
+local function drawPentagon(xPos,yPos,yScale,index,scaleFactors)
+	--draw it at xPosition
+		--yPosition multiplied by how far down
+		--index of pentagon
+		--all the scalefactors of each pentaon
+	love.graphics.draw(pentGraphic,xPos, yPos*yScale,pentagonSpinValue[index],scaleFactors[index], scaleFactors[index],53,55)
+end
 
-
+--the function to send the draw calls for pentagons
 local function drawMenuTextPents()
-	
+	--the local x positions
+	local xPosition = 1049*backgroundScaleFactor+((screenX-(backgroundGraphic:getWidth()*backgroundScaleFactor))/2)
+	local yPositionUnscaled = backgroundScaleFactor+((screenY-(backgroundGraphic:getHeight()*backgroundScaleFactor))/2)
+	--scalefactors for each of the spinning pentagons
+	local scaleFactors = {	(backgroundScaleFactor*0.75)+((backgroundScaleFactor*0.25)*(pentagonSpinValue[1]/6.28319)),
+							(backgroundScaleFactor*0.75)+((backgroundScaleFactor*0.25)*(pentagonSpinValue[2]/6.28319)),
+							(backgroundScaleFactor*0.75)+((backgroundScaleFactor*0.25)*(pentagonSpinValue[3]/6.28319)),
+							(backgroundScaleFactor*0.75)+((backgroundScaleFactor*0.25)*(pentagonSpinValue[4]/6.28319))}
 
-	love.graphics.draw(pentGraphic,1049*backgroundScaleFactor+((screenX-(backgroundGraphic:getWidth()*backgroundScaleFactor))/2), 
-		288*backgroundScaleFactor+((screenY-(backgroundGraphic:getHeight()*backgroundScaleFactor))/2),
-		pentagonSpinValue[1],
-
-		(backgroundScaleFactor*0.75)+((backgroundScaleFactor*0.25)*(pentagonSpinValue[1]/6.28319)),
-		(backgroundScaleFactor*0.75)+((backgroundScaleFactor*0.25)*(pentagonSpinValue[1]/6.28319)),
-		
-		53,55)
-
-	love.graphics.draw(pentGraphic,1049*backgroundScaleFactor+((screenX-(backgroundGraphic:getWidth()*backgroundScaleFactor))/2), 
-		363*backgroundScaleFactor+((screenY-(backgroundGraphic:getHeight()*backgroundScaleFactor))/2),
-		pentagonSpinValue[2],
-
-		(backgroundScaleFactor*0.75)+((backgroundScaleFactor*0.25)*(pentagonSpinValue[2]/6.28319)),
-		(backgroundScaleFactor*0.75)+((backgroundScaleFactor*0.25)*(pentagonSpinValue[2]/6.28319)),
-		
-		53,55)
-
-	love.graphics.draw(pentGraphic,1049*backgroundScaleFactor+((screenX-(backgroundGraphic:getWidth()*backgroundScaleFactor))/2), 
-		438*backgroundScaleFactor+((screenY-(backgroundGraphic:getHeight()*backgroundScaleFactor))/2),
-		pentagonSpinValue[3],
-
-		(backgroundScaleFactor*0.75)+((backgroundScaleFactor*0.25)*(pentagonSpinValue[3]/6.28319)),
-		(backgroundScaleFactor*0.75)+((backgroundScaleFactor*0.25)*(pentagonSpinValue[3]/6.28319)),
-		
-		53,55)
-
-	love.graphics.draw(pentGraphic,1049*backgroundScaleFactor+((screenX-(backgroundGraphic:getWidth()*backgroundScaleFactor))/2), 
-		513*backgroundScaleFactor+((screenY-(backgroundGraphic:getHeight()*backgroundScaleFactor))/2),
-		pentagonSpinValue[4],
-
-		(backgroundScaleFactor*0.75)+((backgroundScaleFactor*0.25)*(pentagonSpinValue[4]/6.28319)),
-		(backgroundScaleFactor*0.75)+((backgroundScaleFactor*0.25)*(pentagonSpinValue[4]/6.28319)),
-		
-		53,55)
-
+	--draw all the pentagons onscreen
+	drawPentagon(xPosition,yPositionUnscaled,288,1,scaleFactors)
+	drawPentagon(xPosition,yPositionUnscaled,363,2,scaleFactors)
+	drawPentagon(xPosition,yPositionUnscaled,438,3,scaleFactors)
+	drawPentagon(xPosition,yPositionUnscaled,513,4,scaleFactors)
 end
 
 
 
 local function renderMenuText()
+	--declare local variables for position
+	local xPosition = 1090*backgroundScaleFactor+((screenX-(backgroundGraphic:getWidth()*backgroundScaleFactor))/2)
+	local yPositionUnscaled = backgroundScaleFactor+((screenY-(backgroundGraphic:getHeight()*backgroundScaleFactor))/2)
+	--set font
 	love.graphics.setFont(GenJyuuGothic)
-	love.graphics.print("Start", 1090*backgroundScaleFactor+((screenX-(backgroundGraphic:getWidth()*backgroundScaleFactor))/2), 
-		265*backgroundScaleFactor+((screenY-(backgroundGraphic:getHeight()*backgroundScaleFactor))/2),
-		0,backgroundScaleFactor,backgroundScaleFactor)
-
-	love.graphics.print("Config", 1090*backgroundScaleFactor+((screenX-(backgroundGraphic:getWidth()*backgroundScaleFactor))/2), 
-		340*backgroundScaleFactor+((screenY-(backgroundGraphic:getHeight()*backgroundScaleFactor))/2),
-		0,backgroundScaleFactor,backgroundScaleFactor)
-
-	love.graphics.print("CG Mode", 1090*backgroundScaleFactor+((screenX-(backgroundGraphic:getWidth()*backgroundScaleFactor))/2), 
-		415*backgroundScaleFactor+((screenY-(backgroundGraphic:getHeight()*backgroundScaleFactor))/2),
-		0,backgroundScaleFactor,backgroundScaleFactor)
-
-	love.graphics.print("Exit", 1090*backgroundScaleFactor+((screenX-(backgroundGraphic:getWidth()*backgroundScaleFactor))/2), 
-		490*backgroundScaleFactor+((screenY-(backgroundGraphic:getHeight()*backgroundScaleFactor))/2),
-		0,backgroundScaleFactor,backgroundScaleFactor)
+	--draw all the text
+	love.graphics.print("Start",   xPosition,  265*yPositionUnscaled,  0,  backgroundScaleFactor,backgroundScaleFactor)
+	love.graphics.print("Config",  xPosition,  340*yPositionUnscaled,  0,  backgroundScaleFactor,backgroundScaleFactor)
+	love.graphics.print("CG Mode", xPosition,  415*yPositionUnscaled,  0,  backgroundScaleFactor,backgroundScaleFactor)
+	love.graphics.print("Exit",    xPosition,  490*yPositionUnscaled,  0,  backgroundScaleFactor,backgroundScaleFactor)
 end
 
 
@@ -100,9 +83,6 @@ function menuDeclaration()
 	backgroundGraphic = love.graphics.newImage("assets/images/mainMenu/bg2.png")
 	--declare pentagons behind text
 	pentGraphic = love.graphics.newImage("assets/images/mainMenu/pent.png")
-	--declare music source, as stream file
-	musicSrc = love.audio.newSource("assets/music/Continue_Life.wav", "static")
-	musicSrc:play()
 	--declare local text font
 	GenJyuuGothic = love.graphics.newFont("assets/fonts/GenJyuuGothic-Bold.ttf", 30)
 end
@@ -168,16 +148,8 @@ end
 
 
 
-function drawMenu()
-	drawBackground()
-	drawMenuTextPents()
-	renderMenuText()
 
-	spinPentagon()
-
-	drawTextTopLeft()
-end
-
+--draw simple text to say which is hovered
 function drawTextTopLeft()
 	local x = ((screenX-(backgroundGraphic:getWidth()*backgroundScaleFactor))/2)+7
 
@@ -193,42 +165,43 @@ function drawTextTopLeft()
 end
 
 
-
+--is mouse hovered over one of the buttons
 function testForMenuButton()
-	if(testMouseOver(996*backgroundScaleFactor+((screenX-(backgroundGraphic:getWidth()*backgroundScaleFactor))/2),
-		250*backgroundScaleFactor+((screenY-(backgroundGraphic:getHeight()*backgroundScaleFactor))/2),
-		menuButtonBlank,backgroundScaleFactor,backgroundScaleFactor,false)) then
+	local xPosition = 996*backgroundScaleFactor+((screenX-(backgroundGraphic:getWidth()*backgroundScaleFactor))/2)
+	local yPositionUnscaled = backgroundScaleFactor+((screenY-(backgroundGraphic:getHeight()*backgroundScaleFactor))/2)
 
-		
+	if(testMouseOver(xPosition,250*yPositionUnscaled,
+			menuButtonBlank,backgroundScaleFactor,backgroundScaleFactor,false)) then
 		return "START"
-
-	elseif(testMouseOver(996*backgroundScaleFactor+((screenX-(backgroundGraphic:getWidth()*backgroundScaleFactor))/2),
-		325*backgroundScaleFactor+((screenY-(backgroundGraphic:getHeight()*backgroundScaleFactor))/2),
-		menuButtonBlank,backgroundScaleFactor,backgroundScaleFactor,false)) then
-
-		
+	elseif(testMouseOver(xPosition,325*yPositionUnscaled,
+			menuButtonBlank,backgroundScaleFactor,backgroundScaleFactor,false)) then
 		return "CONFIG"
-
-	elseif(testMouseOver(996*backgroundScaleFactor+((screenX-(backgroundGraphic:getWidth()*backgroundScaleFactor))/2),
-		400*backgroundScaleFactor+((screenY-(backgroundGraphic:getHeight()*backgroundScaleFactor))/2),
-		menuButtonBlank,backgroundScaleFactor,backgroundScaleFactor,false)) then
-
-		
+	elseif(testMouseOver(xPosition,400*yPositionUnscaled,
+			menuButtonBlank,backgroundScaleFactor,backgroundScaleFactor,false)) then
 		return "CG_MODE"
-
-	elseif(testMouseOver(996*backgroundScaleFactor+((screenX-(backgroundGraphic:getWidth()*backgroundScaleFactor))/2),
-		475*backgroundScaleFactor+((screenY-(backgroundGraphic:getHeight()*backgroundScaleFactor))/2),
-		menuButtonBlank,backgroundScaleFactor,backgroundScaleFactor,false)) then
-
-		
+	elseif(testMouseOver(xPosition,475*yPositionUnscaled,
+			menuButtonBlank,backgroundScaleFactor,backgroundScaleFactor,false)) then
 		return "EXIT"
-
 	end
 end
 
+--is the mouse button down?
+	--if so, do stuff
 function menuMousePress(button)
 	if(button==1)then
 		if(testForMenuButton()=="START") then gameMode=1
 		elseif(testForMenuButton()=="EXIT") then love.event.quit() end
 	end
+end
+
+--this is a single function that will call all the
+	-- functions to draw in the correct order
+function drawMenu()
+	drawBackground()
+	drawMenuTextPents()
+	renderMenuText()
+
+	spinPentagon()
+
+	drawTextTopLeft()
 end
