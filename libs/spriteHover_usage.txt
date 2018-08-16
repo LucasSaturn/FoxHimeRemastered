@@ -1,0 +1,19 @@
+--USAGE--
+
+To use spriteHover.lua, you must do the following:
+
+	-	declare an image data variable, using `love.image.newImageData()`
+	-	declare the scale of the sprite onscreen
+	-	declare the x and y co-ordinates of the sprite onscreen
+
+
+Since this script is extremely basic, you are not able to use rotation on your sprites. 
+
+Function: testMouseOver()
+Parameters:
+	-	spriteX, X position of the sprite on screen
+	-	spriteY, Y position of the sprite on screen
+	-	spriteImageData, contains the pixel data, declared by `love.image.newImageData()
+	-	scaleX, X scale of the sprite on screen
+	-	scaleY, Y scale of the sprite on screen
+	-	requireAlpha, whether or not you want to test for an alpha channel
