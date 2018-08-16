@@ -11,6 +11,9 @@ local menuButtonBlank = love.image.newImageData(275,75)
 --rotation of pentagons
 local pentagonSpinValue = {0,0,0,0}
 
+--variable that lists whether a button is hovered over
+local currentHoveredButton = ""
+
 --this function figures out the largest size that the background can be
 	--this is in terms of fitting a 16:9 image inside the window
 local function figureOutLargestScaleBG(WidthBackground, HeightBackground, screenX, screenY)
@@ -93,7 +96,7 @@ function spinPentagon()
 	local spinSpeed = 15
 	local maxVal = 6.28319
 
-	if(testForMenuButton()=="START") then
+	if(currentHoveredButton=="START") then
 		if(pentagonSpinValue[1]<maxVal) then pentagonSpinValue[1] = pentagonSpinValue[1]+(love.timer.getDelta()*spinSpeed) end
 	elseif(pentagonSpinValue[1]>0) then
 		pentagonSpinValue[1] = pentagonSpinValue[1]-(love.timer.getDelta()*spinSpeed)
@@ -107,7 +110,7 @@ function spinPentagon()
 
 
 
-	if(testForMenuButton()=="CONFIG") then
+	if(currentHoveredButton=="CONFIG") then
 		if(pentagonSpinValue[2]<maxVal) then pentagonSpinValue[2] = pentagonSpinValue[2]+(love.timer.getDelta()*spinSpeed) end
 	elseif(pentagonSpinValue[2]>0) then
 		pentagonSpinValue[2] = pentagonSpinValue[2]-(love.timer.getDelta()*spinSpeed)
@@ -120,7 +123,7 @@ function spinPentagon()
 
 
 
-	if(testForMenuButton()=="CG_MODE") then
+	if(currentHoveredButton=="CG_MODE") then
 		if(pentagonSpinValue[3]<maxVal) then pentagonSpinValue[3] = pentagonSpinValue[3]+(love.timer.getDelta()*spinSpeed) end
 	elseif(pentagonSpinValue[3]>0) then
 		pentagonSpinValue[3] = pentagonSpinValue[3]-(love.timer.getDelta()*spinSpeed)
@@ -133,7 +136,7 @@ function spinPentagon()
 
 
 
-	if(testForMenuButton()=="EXIT") then
+	if(currentHoveredButton=="EXIT") then
 		if(pentagonSpinValue[4]<maxVal) then pentagonSpinValue[4] = pentagonSpinValue[4]+(love.timer.getDelta()*spinSpeed) end
 	elseif(pentagonSpinValue[4]>0) then
 		pentagonSpinValue[4] = pentagonSpinValue[4]-(love.timer.getDelta()*spinSpeed)
@@ -153,13 +156,13 @@ end
 function drawTextTopLeft()
 	local x = ((screenX-(backgroundGraphic:getWidth()*backgroundScaleFactor))/2)+7
 
-	if(testForMenuButton()=="START") then
+	if(currentHoveredButton=="START") then
 		love.graphics.print("START", x, 0)
-	elseif(testForMenuButton()=="CONFIG") then
+	elseif(currentHoveredButton=="CONFIG") then
 		love.graphics.print("CONFIG", x, 0)
-	elseif(testForMenuButton()=="CG_MODE") then
+	elseif(currentHoveredButton=="CG_MODE") then
 		love.graphics.print("CG MODE", x, 0)
-	elseif(testForMenuButton()=="EXIT") then
+	elseif(currentHoveredButton=="EXIT") then
 		love.graphics.print("EXIT", x, 0)
 	end
 end
@@ -183,14 +186,16 @@ function testForMenuButton()
 			menuButtonBlank,backgroundScaleFactor,backgroundScaleFactor,false)) then
 		return "EXIT"
 	end
+
+	return ""
 end
 
 --is the mouse button down?
 	--if so, do stuff
 function menuMousePress(button)
 	if(button==1)then
-		if(testForMenuButton()=="START") then gameMode=1
-		elseif(testForMenuButton()=="EXIT") then love.event.quit() end
+		if(currentHoveredButton=="START") then gameMode=1
+		elseif(currentHoveredButton=="EXIT") then love.event.quit() end
 	end
 end
 
@@ -204,4 +209,7 @@ function drawMenu()
 	spinPentagon()
 
 	drawTextTopLeft()
+
+	--set variable that contains currently hovered button
+	currentHoveredButton = testForMenuButton()
 end
